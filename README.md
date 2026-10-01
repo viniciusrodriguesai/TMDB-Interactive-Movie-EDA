@@ -1,143 +1,52 @@
-# TMDB Interactive Movie EDA 🎬📊
+# TMDB Interactive Movie EDA
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  
-[![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)  
-[![TMDB API](https://img.shields.io/badge/TMDB-API-yellow.svg)](https://www.themoviedb.org/documentation/api)
+A historical Jupyter project exploring a snapshot of popular TMDB movies with Python, pandas, Plotly and widgets. It combines API collection, genre analysis, financial summaries and a basic rating regression.
 
----
+## Local setup
 
-## 📖 Project Overview
-Interactive Exploratory Data Analysis (EDA) of movies using The Movie Database (TMDB) API. Fetch real-world data on box office, ratings, and more, then explore trends with dynamic, interactive charts directly in a Jupyter Notebook.
+Create and activate a Python virtual environment, then run from the repository root:
 
----
-
-## 📋 Table of Contents
-- [Features](#-features)
-- [Technologies](#-technologies)
-- [Requirements](#-requirements)
-- [Installation](#-installation)
-- [TMDB API Setup](#-tmdb-api-setup)
-- [Usage](#-usage)
-- [Demo](#-demo)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
-
----
-
-## ✨ Features
-- 📊 **Interactive Visualizations:** Scatter plots, bar charts, and line graphs with hover details.
-- 🔎 **Dynamic Filters:** Filter by year, genre, popularity, and more using `ipywidgets` controls.
-- 📈 **Data Insights:** Analyze box office trends, rating distributions, and popularity metrics.
-- 🔄 **Automated Data Pipeline:** Fetch, clean, and preprocess data from TMDB with `pandas` and `requests`.
-
-> *Why include an API section?*  
-> Highlighting API integration shows practical skills in real-world data retrieval and backend communication—qualities recruiters value for data-centric roles.
-
----
-
-## 🛠 Technologies
-- **Language:** Python 3.8+
-- **Notebook Environment:** Jupyter Notebook
-- **Libraries:**
-  - `pandas` for data manipulation
-  - `requests` for API calls
-  - `plotly-express` for interactive charts
-  - `ipywidgets` for user controls
-
----
-
-## 📦 Requirements
-- Python 3.8 or higher
-- TMDB account and API key
-- `pip` package manager
-
----
-
-## 🚀 Installation
 ```bash
-# Clone this repository
-git clone https://github.com/viniciusrodriguesai/TMDB-Interactive-Movie-EDA.git
-cd TMDB-Interactive-Movie-EDA
-
-# (Optional) Create and activate a virtual environment
-python -m venv venv
-# Linux/macOS
-source venv/bin/activate
-# Windows
-venv\\Scripts\\activate
-
-# Install dependencies
-pip install -r requirements.txt
-````
-
----
-
-## 🔑 TMDB API Setup
-
-1. Sign up for a free account at [TMDB](https://www.themoviedb.org/).
-2. Generate an API key under **Settings → API**.
-3. Add your API key to the notebook or a `.env` file:
-
-```python
-import os
-os.environ['TMDB_API_KEY'] = 'YOUR_API_KEY_HERE'
+python -m pip install -r requirements.txt
 ```
 
-> **Note:** Including an API setup section demonstrates your ability to work with external services and configure environments, which recruiters often look for.
+For live API collection, create a local `.env` containing your TMDB API Read Access Token:
 
----
+```dotenv
+TMDB_BEARER=replace_with_your_read_access_token
+```
 
-## 🎓 Usage
+The notebook reads `TMDB_BEARER`, not `TMDB_API_KEY`. Never commit a real token. Start Jupyter **from the Notebooks directory**, since the notebook uses paths relative to that directory:
 
-1. Launch the Jupyter Notebook:
+```bash
+cd Notebooks
+python -m jupyter lab TMDB_Interactive_EDA.ipynb
+```
 
-   ```bash
-   jupyter notebook Notebooks/TMDB_EDA.ipynb
-   ```
-2. Run all cells in sequence to:
+Run cells in order for the live workflow. Network access is required for API calls and connected Plotly rendering. Credentials and live widgets were not tested during the portfolio audit.
 
-   * Download and preprocess data
-   * Generate interactive visualizations
-   * Use widgets for custom filtering
+## Tracked data
 
----
+- `Notebooks/data/raw/`: saved popular-movie API pages.
+- `Notebooks/data/processed/movies_with_financials.csv`: 509 movies with financial fields.
 
-## 📸 Demo
+The popular-movie snapshot is a selected sample. Its release-year distribution and financial totals do not estimate the entire film industry or establish pandemic effects.
 
-> Example: Action Movies Released in 2020
-The screenshot previously referenced here is not tracked. Run the notebook locally to inspect the interactive charts.
+## Verified corrections
 
----
+CSV genre fields are safely decoded from list text before exploding: 509 movies produce **1,408 movie/genre rows**. A movie may belong to several genres, so totals across genres overlap.
 
-## 🤝 Contributing
+The rating regression is compared against a training-mean baseline on the same fixed 80/20 split:
 
-Contributions are welcome!
+| Model | Test MSE |
+| --- | ---: |
+| Linear regression | 2.467321 |
+| Training-mean baseline | 2.630154 |
 
-1. Fork the repo
-2. Create a new branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -m 'Add new feature'`
-4. Push to your branch: `git push origin feature-name`
-5. Open a Pull Request
+This modest improvement on one split does not establish external generalization. Only the genre-summary and regression cells were rerun against the tracked CSV. Edited-cell outputs were cleared after changes; the complete live workflow was not rerun.
 
----
+Redundant embedded Plotly JavaScript outputs were removed from the summary-chart cell, reducing the notebook from about 14.5 MB to **0.10 MB**. Re-render charts locally. The previously linked screenshot was not tracked and has been removed from the documentation.
 
-## 📄 License
+## License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## 📬 Contact
-
-Vinícius Mangueira – [GitHub](https://github.com/Vinicius-Mangueira) – [LinkedIn](https://www.linkedin.com/in/vinicius-mangueira-0b8285224/) – [viniciusmangueira04@gmail.com](mailto:viniciusmangueira04@gmail.com)
-
-## Portfolio validation
-
-The processed CSV stores genres as text representations of lists. The financial summary now safely decodes these lists before exploding them: 509 movies produce 1,408 movie/genre rows, rather than treating each genre combination as one category. Financial totals across genres overlap because a movie may belong to multiple genres.
-
-The rating regression is compared with a training-mean baseline on the same fixed 80/20 split. Recomputed on the tracked CSV: model MSE 2.467321, baseline MSE 2.630154. This modest reduction on one split does not establish generalization; the popular-movie snapshot is a selected sample.
-
-Only the genre-summary and regression cells were rerun during this check. Their old saved outputs were cleared after editing; the full live-API workflow and interactive widgets were not rerun.
-
-Large embedded Plotly JavaScript outputs in the summary-chart cell were removed; the connected renderer avoids repeatedly bundling the library. The notebook decreased from about 14.5 MB to about 0.10 MB. The charts use a network connection for Plotly's browser library and should be rendered again locally.
+[MIT](LICENSE) for source code; TMDB data and API access conditions are separate.
